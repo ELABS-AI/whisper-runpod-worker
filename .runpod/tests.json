@@ -1,0 +1,34 @@
+{
+  "tests": [
+    {
+      "name": "transcribe_audio_fast",
+      "input": {
+        "audio_base64": "",
+        "language": "en",
+        "response_format": "text",
+        "temperature": 0.0,
+        "model": "base"
+      },
+      "timeout": 60000
+    },
+    {
+      "name": "transcribe_audio_quality",
+      "input": {
+        "audio_base64": "",
+        "language": "en",
+        "response_format": "json",
+        "temperature": 0.0,
+        "model": "large-v3",
+        "word_timestamps": true
+      },
+      "timeout": 300000
+    }
+  ],
+  "config": {
+    "gpuTypeId": "NVIDIA GeForce RTX 4090",
+    "gpuCount": 1,
+    "allowedCudaVersions": [
+      "12.8", "12.7", "12.6", "12.5", "12.4", "12.3", "12.2", "12.1", "12.0"
+    ]
+  }
+}
