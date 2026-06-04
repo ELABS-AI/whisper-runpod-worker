@@ -1,49 +1,78 @@
 # elabs / Whisper STT
 
-[![Run on RunPod](https://runpod.io/badge/runpod-hub)](https://runpod.io/console/hub)
+[![Deploy on RunPod](https://img.shields.io/badge/RunPod-Deploy-orange?logo=runpod)](https://console.runpod.io/hub)
+[![CUDA 12.4](https://img.shields.io/badge/CUDA-12.4-green)](https://developer.nvidia.com/cuda-toolkit)
+[![MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
 
-OpenAI **Whisper large-v3** speech-to-text. Supports 100+ languages, word-level timestamps, and multiple output formats (plain text, SRT, VTT, JSON). Runs on any GPU with ≥4GB VRAM.
+OpenAI **Whisper large-v3** speech-to-text. Transcribe audio in 100+ languages with word-level timestamps and multiple output formats (text, SRT, VTT, JSON).
+
+![Whisper STT](https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/whisper.svg)
 
 ## Highlights
 
-- **100+ languages** — multilingual transcription with auto-detect
-- **Word-level timestamps** — precise word alignment for subtitling
-- **Multiple output formats** — text, JSON (with segments), SRT, VTT
-- **Configurable model size** — base (fast) to large-v3 (accuracy)
-- **GPU efficient** — runs on T4, L4, RTX 4090, and any GPU with ≥4GB VRAM
+- Whisper large-v3 -- OpenAI's best transcription model
+- 100+ languages -- automatic language detection
+- Word-level timestamps -- precise timing for captions
+- Multiple output formats -- text, SRT, VTT, JSON
+- URL or base64 input -- accepts MP3, WAV, M4A, FLAC, OGG
+
+## Quick Start
+
+```bash
+curl -X POST https://api.runpod.ai/v2/{ENDPOINT_ID}/run \
+  -H "Authorization: Bearer $RUNPOD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"audio_url": "https://example.com/audio.mp3", "language": "en"}}'
+```
 
 ## API
 
-### Input
+### Input (URL)
 
 ```json
 {
   "input": {
-    "audio_base64": "<base64-encoded WAV/MP3/FLAC/OGG bytes>",
+    "audio_url": "https://example.com/audio.mp3",
     "language": "en",
-    "response_format": "json",
-    "temperature": 0.0,
-    "word_timestamps": false,
-    "model": "large-v3"
+    "response_format": "text",
+    "temperature": 0.0
   }
 }
 ```
 
-### Output
+### Input (base64)
 
 ```json
 {
-  "text": "The transcribed text content goes here.",
+  "input": {
+    "audio_base64": "<base64 encoded audio>",
+    "language": "auto",
+    "response_format": "json"
+  }
+}
+```
+
+### Output (text format)
+
+```json
+{
+  "text": "Transcribed text content here.",
+  "language": "en",
+  "wall_time_s": 3.2
+}
+```
+
+### Output (json format)
+
+```json
+{
+  "text": "Full transcription text.",
   "segments": [
-    {
-      "id": 0,
-      "start": 0.0,
-      "end": 2.5,
-      "text": "The transcribed text"
-    }
+    {"id": 0, "start": 0.0, "end": 2.5, "text": "First sentence."},
+    {"id": 1, "start": 2.5, "end": 5.0, "text": "Second sentence."}
   ],
   "language": "en",
-  "wall_time_s": 1.2
+  "wall_time_s": 3.2
 }
 ```
 
@@ -51,28 +80,27 @@ OpenAI **Whisper large-v3** speech-to-text. Supports 100+ languages, word-level 
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `audio_base64` | string | **required** | Base64-encoded audio bytes (WAV, MP3, FLAC, OGG) |
-| `language` | string | `null` | Language code (`en`, `fr`, `de`, etc.) or `null` for auto-detect |
-| `response_format` | string | `"json"` | Output format: `text`, `json`, `srt`, `vtt` |
-| `temperature` | float | `0.0` | Sampling temperature (0.0 = greedy/ deterministic) |
-| `word_timestamps` | bool | `false` | Include word-level timestamps in segments |
-| `model` | string | `"large-v3"` | Whisper model size: `tiny`, `base`, `small`, `medium`, `large-v3` |
+| `audio_url` | string | optional | URL to audio file |
+| `audio_base64` | string | optional | Base64-encoded audio |
+| `language` | string | `"auto"` | Language code or "auto" |
+| `response_format` | string | `"text"` | "text", "json", "srt", "vtt" |
+| `temperature` | float | `0.0` | Sampling temperature |
+| `whisper_model` | string | `"large-v3"` | "base", "small", "medium", "large-v3" |
 
 ## GPU Requirements
 
-- **Recommended**: RTX 4090 / RTX 6000 Ada / L40S
-- **Minimum**: Any GPU with ≥4GB VRAM (T4, L4, RTX 3080, A5000, etc.)
-- **CUDA**: 12.0+
+- Minimum: >=4GB VRAM
+- Recommended: RTX 4090, L4, T4 (>=8GB for large-v3)
+- CUDA: 12.4+
 
-## Benchmark
+## Benchmarks
 
-| GPU | Model | Audio Duration | Wall Time |
-|---|---|---|---|
-| RTX 4090 | large-v3 | 60s | ~3.5s |
-| RTX 4090 | base | 60s | ~0.8s |
-| T4 | large-v3 | 60s | ~12s |
-| T4 | base | 60s | ~2.0s |
+| GPU | 60s audio | 10min audio |
+|---|---|---|
+| RTX 4090 | ~5s | ~45s |
+| L4 | ~8s | ~70s |
+| T4 | ~15s | ~130s |
 
 ## License
 
-Apache-2.0 — OpenAI Whisper (MIT licensed model weights).
+MIT. Based on [openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3).
