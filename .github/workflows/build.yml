@@ -2,7 +2,7 @@
 # CI: Build & Push whisper-runpod-worker to GHCR
 #
 # Triggers on push to main (Dockerfile or handler changes) and workflow_dispatch.
-# Pushes to ghcr.io/elabs-ai/elabs-server/whisper-runpod:latest
+# Pushes to ghcr.io/elabs-ai/whisper-runpod-worker:latest
 # Requires secret: GHCR_TOKEN (write:packages PAT for elabs-ai org)
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -24,7 +24,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ghcr.io/elabs-ai/elabs-server/whisper-runpod
+  IMAGE: ghcr.io/elabs-ai/whisper-runpod-worker
   TAG: ${{ inputs.image_tag || 'latest' }}
 
 jobs:
