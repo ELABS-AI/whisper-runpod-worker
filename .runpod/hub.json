@@ -1,7 +1,6 @@
 {
   "description": "OpenAI Whisper large-v3 for speech-to-text. Supports 100+ languages, diarization, word-level timestamps, and multiple output formats (text, SRT, VTT, JSON). API: POST JSON with {audio_base64, language, response_format, temperature} -> {text, segments, language, wall_time_s}. GPU: runs on any GPU with >=4GB VRAM (T4, L4, RTX 4090, etc.).",
   "type": "serverless",
-  "task": "audio-to-text",
   "category": "audio",
   "config": {
     "runsOn": "GPU",
